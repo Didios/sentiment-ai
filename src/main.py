@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from .schemas import PredictionRequest, PredictionResponse
-from .model import SentimentModel
+from src.schemas import PredictionRequest, PredictionResponse
+from src.model import SentimentModel
 
 
 app = FastAPI(title="SentimentAI", version="0.1.0")
