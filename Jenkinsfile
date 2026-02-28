@@ -22,10 +22,10 @@ pipeline {
 
         stage('Debug Paths') {
             steps {
-                sh "
-                    echo \\\"Jenkins workspace: ${env.WORKSPACE}\\\"
+                sh '''
+                    echo \"Jenkins workspace: ${env.WORKSPACE}\"
                     ls -l
-                "
+                '''
             }
         }
 
