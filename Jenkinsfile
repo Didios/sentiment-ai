@@ -29,7 +29,7 @@ pipeline {
                     -v $PWD:/app \
                     -w /app \
                     python:3.11-slim \
-                    sh -c "pip install flake8 -q && flake8 src/ --max-line-length=100"
+                    sh -c "pwd && ls -l && ls -l src && pip install flake8 -q && flake8 src/ --max-line-length=100"
                 '''
             }
         }
