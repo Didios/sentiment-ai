@@ -23,7 +23,7 @@ pipeline {
         stage('Debug Paths') {
             steps {
                 sh '''
-                    echo "Jenkins workspace: $PWD"
+                    echo "Jenkins workspace: ${env.WORKSPACE}"
                     ls -l
                 '''
             }
@@ -35,7 +35,7 @@ pipeline {
                 // --rm supprime le conteneur après l'exécution
                 sh '''
                     docker run --rm \
-                    -v $PWD:/app \
+                    -v ${env.WORKSPACE}:/app \
                     -w /app \
                     python:3.11-slim \
                     sh -c "pip install flake8 -q && ls -l && flake8 src/ --max-line-length=100"
