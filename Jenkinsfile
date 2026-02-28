@@ -38,7 +38,7 @@ pipeline {
                     -v ${env.WORKSPACE}:/app \
                     -w /app \
                     python:3.11-slim \
-                    sh -c "pip install flake8 -q && ls -l && flake8 . --max-line-length=100"
+                    sh -c "pip install flake8 -q && ls -l && flake8 src --max-line-length=100"
                 """
             }
         }
