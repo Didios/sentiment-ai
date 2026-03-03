@@ -33,7 +33,15 @@ pipeline {
                 // Construire l'image Docker
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 // Lancer pytest dans le conteneur fraichement construit
-                sh "docker run --rm -e CI=true ${IMAGE_NAME}:${IMAGE_TAG} pytest tests/ -v --cov=src --cov-report=term-missing --cov-fail-under=70"
+                sh """
+                    docker run --rm -e CI=true \
+                        -v ${env.WORKSPACE}/tests:/app/tests
+                        ${IMAGE_NAME}:${IMAGE_TAG} 
+                        pytest tests/ -v \
+                            --cov=src \
+                            --cov-report=term-missing \
+                            --cov-fail-under=70
+                    """
             }
 
             post {
