@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le code source
 COPY src/ ./src/
+COPY tests/ ./tests/
 
 # Sécurité : ne PAS tourner en root
 RUN adduser --disabled-password --gecos '' appuser
