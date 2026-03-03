@@ -20,20 +20,11 @@ pipeline {
             }
         }
 
-        stage('Debug Paths') {
-            steps {
-                sh """
-                    echo "Jenkins workspace: ${env.WORKSPACE}"
-                    ls -l
-                """
-            }
-        }
-
         stage('Lint') {
             steps {
                 // Lancer flake8 dans un conteneur Python temporaire
                 // --rm supprime le conteneur après l'exécution
-                sh 'docker run --rm -v '+ env.WORKSPACE + ':/app -w /app python:3.11-slim sh -c "apt-get update -qq && apt-get install -y -qq tree && tree && pip install flake8 -q && flake8 src/ --max-line-length=100"'
+                sh "docker run --rm -v ${env.WORKSPACE}:/app -w /app python:3.11-slim sh -c 'pip install flake8 -q && flake8 src/ --max-line-length=100'"
             }
         }
 
@@ -42,15 +33,7 @@ pipeline {
                 // Construire l'image Docker
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 // Lancer pytest dans le conteneur fraichement construit
-                sh '''
-                    docker run --rm \
-                    -e CI=true \
-                ''' + "${IMAGE_NAME}:${IMAGE_TAG}" + ''' \
-                    pytest tests/ -v \
-                    --cov=src \
-                    --cov-report=term-missing \
-                    --cov-fail-under=70
-                '''
+                sh "docker run --rm -e CI=true ${IMAGE_NAME}:${IMAGE_TAG} pytest tests/ -v --cov=src --cov-report=term-missing --cov-fail-under=70"
             }
 
             post {
@@ -72,23 +55,23 @@ pipeline {
                     usernameVariable: 'REGISTRY_USER',
                     passwordVariable: 'REGISTRY_PASS'
                 )]) {
-                    sh '''
+                    sh """
                         # Login au registry
-                        echo $REGISTRY_PASS | docker login ghcr.io \
-                            -u $REGISTRY_USER --password-stdin
+                        echo \$REGISTRY_PASS | docker login ghcr.io \
+                            -u \$REGISTRY_USER --password-stdin
                         
                         # Tagger avec le SHA Git
-                        docker tag ''' + "${IMAGE_NAME}:${IMAGE_TAG}" + ''' \
-                            ''' + "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}" + '''
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} \
+                            ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
                         
                         # Tagger aussi comme 'latest' de la branche main
-                        docker tag ''' + "${IMAGE_NAME}:${IMAGE_TAG}" + ''' \
-                            ''' + "${REGISTRY}/${IMAGE_NAME}:main" + '''
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} \
+                            ${REGISTRY}/${IMAGE_NAME}:main
                         
                         # Pousser les deux tags
-                        docker push ''' + "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}" + '''
-                        docker push ''' + "${REGISTRY}/${IMAGE_NAME}:main" + '''
-                    '''
+                        docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${REGISTRY}/${IMAGE_NAME}:main
+                    """
                 }
             }
         }
