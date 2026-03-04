@@ -21,6 +21,10 @@ COPY tests/ ./tests/
 
 # Sécurité : ne PAS tourner en root
 RUN adduser --disabled-password --gecos '' appuser
+
+# donner les droits sur /app
+RUN chown -R appuser:appuser /app
+
 USER appuser
 EXPOSE 8080
 
