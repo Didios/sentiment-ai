@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Nom de l'image Docker
         IMAGE_NAME = 'sentiment-ai'
-        REGISTRY = 'ghcr.io/didios'
+        REGISTRY = 'ghcr.io/ecdpia'
         // Tag = 7 premiers caractères du SHA Git
         IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout:true).trim()
     }
