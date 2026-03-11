@@ -72,22 +72,25 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
+                        WORKDIR=$(docker inspect --format '{{.Config.WorkingDir}}' $IMAGE_NAME:$IMAGE_TAG)
+                        WORKDIR=${WORKDIR:-/}
+
                         docker run --rm \
                             --network tp-sentiment-ai_cicd-network \
-                            -v "$WORKSPACE":/workspace \
-                            -w /workspace \
+                            -v "$WORKSPACE":$WORKDIR \
+                            -w $WORKDIR \
                             -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                             -e SONAR_TOKEN="$SONARQUBE_TOKEN" \
                             sonarsource/sonar-scanner-cli:latest \
                             sonar-scanner \
                             -Dsonar.projectKey=sentiment-ai \
                             -Dsonar.projectName=SentimentAI \
-                            -Dsonar.projectBaseDir=/workspace \
-                            -Dsonar.sources=/workspace/src \
+                            -Dsonar.projectBaseDir=$WORKDIR \
+                            -Dsonar.sources=$WORKDIR/src \
                             -Dsonar.python.version=3.11 \
-                            -Dsonar.python.coverage.reportPaths=/workspace/coverage.xml \
+                            -Dsonar.python.coverage.reportPaths=/$WORKDIR/coverage.xml \
                             -Dsonar.sourceEncoding=UTF-8 \
-                            -Dsonar.scanner.metadataFilePath=/workspace/report-task.txt
+                            -Dsonar.scanner.metadataFilePath=/$WORKDIR/report-task.txt
                     '''
                 }
             }
