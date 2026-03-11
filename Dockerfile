@@ -3,6 +3,11 @@
 # Image de base officielle — slim = allégée (~50 Mo)
 FROM python:3.11-slim
 
+
+RUN apt-get update \
+ && apt-get upgrade -y \
+ && rm -rf /var/lib/apt/lists/*
+
 # Éviter les fichiers .pyc et forcer les logs en temps réel
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -13,6 +18,7 @@ WORKDIR /app
 # IMPORTANT : copier requirements AVANT le code
 # → Docker réutilise ce layer en cache si requirements.txt ne change pas
 COPY requirements.txt .
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le code source

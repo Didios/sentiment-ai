@@ -107,7 +107,7 @@ pipeline {
         stage ('Security Scan') {
             steps {
                 // Scanner l'image construite avec trivy
-                // -- exit-code 1 : fail si des CVE CRITICAL sont trouvées
+                // --exit-code 1 : fail si des CVE CRITICAL sont trouvées
                 sh '''
                     docker run --rm \
                         -v /var/run/docker.sock:/var/run/docker.sock \
