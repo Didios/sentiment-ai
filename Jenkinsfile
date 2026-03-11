@@ -76,7 +76,7 @@ pipeline {
                         WORKDIR=${WORKDIR:-/}
 
                         docker run --rm \
-                            --network tp-sentiment-ai_cicd-network \
+                            --network cicd-network \
                             -v "$WORKSPACE":$WORKDIR \
                             -w $WORKDIR \
                             -e SONAR_HOST_URL="$SONAR_HOST_URL" \
