@@ -82,7 +82,7 @@ pipeline {
                             -Dsonar.projectBaseDir=/workspace \
                             -Dsonar.source=src \
                             -Dsonar.python.version=3.11 \
-                            -Dsonar.python.coverage.reportPaths=coverage.xml \
+                            -Dsonar.python.coverage.reportPaths=/workspace/coverage.xml \
                             -Dsonar.sourceEncoding=UTF-8 \
                             -Dsonar.scanner.metadataFilePath=/workspace/report-task.txt
                     '''
